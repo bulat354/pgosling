@@ -1,0 +1,87 @@
+<div class="w-full h-full p-6">
+  <h1 class="text-2xl font-bold mb-4">SQL Runner (Angular + Tailwind)</h1>
+
+  <div class="grid grid-cols-2 gap-4 mb-4">
+    <div>
+      <label class="block text-sm font-medium mb-1">Host</label>
+      <input [(ngModel)]="dbConfig.host" (ngModelChange)="saveConfig()" class="w-full border rounded p-2 focus:ring focus:ring-blue-300"/>
+    </div>
+    <div>
+      <label class="block text-sm font-medium mb-1">Port</label>
+      <input [(ngModel)]="dbConfig.port" (ngModelChange)="saveConfig()" class="w-full border rounded p-2 focus:ring focus:ring-blue-300"/>
+    </div>
+    <div>
+      <label class="block text-sm font-medium mb-1">User</label>
+      <input [(ngModel)]="dbConfig.user" (ngModelChange)="saveConfig()" class="w-full border rounded p-2 focus:ring focus:ring-blue-300"/>
+    </div>
+    <div>
+      <label class="block text-sm font-medium mb-1">Password</label>
+      <input [(ngModel)]="dbConfig.password" (ngModelChange)="saveConfig()" class="w-full border rounded p-2 focus:ring focus:ring-blue-300"/>
+    </div>
+  </div>
+
+  <button (click)="getDatabases()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded mb-4">
+    Загрузить базы данных
+  </button>
+
+  <div *ngIf="databases.length">
+    <label class="block text-sm font-medium mb-1">Database</label>
+    <select [(ngModel)]="dbConfig.database" 
+            (ngModelChange)="saveConfig()"
+            (change)="loadSchemas()"
+            class="w-full border rounded p-2 mb-4">
+      <option *ngFor="let db of databases" [value]="db">{{ db }}</option>
+    </select>
+  </div>
+  
+  <div *ngIf="schemas.length">
+    <label class="block text-sm font-medium mb-1">Schema</label>
+    <select [(ngModel)]="dbConfig.schema"
+            (ngModelChange)="saveConfig()"
+            class="w-full border rounded p-2 mb-4">
+      <option *ngFor="let schema of schemas" [value]="schema">{{ schema }}</option>
+    </select>
+  </div>
+
+  <textarea
+    [(ngModel)]="sql"
+    rows="24"
+    class="w-full border rounded p-3 mb-4 focus:ring focus:ring-blue-300"
+  ></textarea>
+
+  <button
+    (click)="runQuery()"
+    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+  >
+    Выполнить
+  </button>
+
+  <div *ngIf="error" class="text-red-600 mt-4">
+    {{ error }}
+  </div>
+
+  <div *ngIf="result" class="mt-6">
+    <h3 class="text-lg font-semibold mb-2">Результат:</h3>
+    <div class="overflow-auto">
+      <table class="min-w-full border border-gray-300">
+        <thead class="bg-gray-100">
+          <tr>
+            <th
+              *ngFor="let field of result.fields"
+              class="border px-2 py-1 text-left"
+            >
+              {{ field }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of result.rows" class="odd:bg-gray-50">
+            <td *ngFor="let field of result.fields" class="border px-2 py-1">
+              {{ row[field] }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
